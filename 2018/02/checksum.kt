@@ -12,16 +12,11 @@ fun firstPart(filename : String) {
 	var lines = File(filename).readLines()
 	var two : Int = 0
 	var three : Int = 0
-	val defaultMap = HashMap<Char, Int>() 
-	for (i in 'a'..'z') {
-		defaultMap.put(i, 0)
-	}
+	val defaultMap = ('a'..'z').map { it to 0 }.toMap()
 	lines.forEach { 
 		val map = HashMap<Char, Int>(defaultMap)
 		it.asSequence().forEach {
-			var kek = map[it]!!
-			kek++
-			map[it] = kek
+			map[it] = (map[it] ?: 0) + 1
 		}
 		var wasTwo = false
 		var wasThree = false
