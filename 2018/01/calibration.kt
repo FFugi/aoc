@@ -9,8 +9,7 @@ fun main(args : Array<String>) {
 }
 
 fun firstPart(filename : String) {
-	var offset : Int = 0
-	File(filename).forEachLine { offset += it.toInt() }
+	var offset = File(filename).readLines().map { it.toInt() }.reduce { a, b -> a + b }
 	println(offset)
 }
 
