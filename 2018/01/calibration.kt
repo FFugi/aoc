@@ -1,25 +1,17 @@
 import java.io.File
 
 fun main(args : Array<String>) {
-	if (args[1] == "1") {
-		firstPart(args[0])
-	} else {
-		secondPart(args[0])
-	}
-}
+	val input = File(args[0]).readLines()
 
-fun firstPart(filename : String) {
-	var offset = File(filename).readLines().map { it.toInt() }.reduce { a, b -> a + b }
-	println(offset)
-}
+	var first = input.map { it.toInt() }.reduce { a, b -> a + b }
+	println("First part: $first")
 
-fun secondPart(filename : String) {
 	var offset : Int = 0
 	var found : Boolean = false
 	var result : Int = 0
 	var mySet : HashSet<Int> = hashSetOf(0)
 	while (!found) { 
-		File(filename).forEachLine {
+		input.forEach {
 			if (!found) {
 				offset += it.toInt()
 				if (!mySet.contains(offset)) {
@@ -31,5 +23,6 @@ fun secondPart(filename : String) {
 			}
 		}
 	}
-	println(result)
+	println("Second part: $result")
 }
+
