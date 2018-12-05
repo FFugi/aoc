@@ -24,14 +24,9 @@ fun reactMe(input : String) : String {
 
 fun main(args : Array<String>) {
 	var input = File(args[0]).readLines()[0]
-
-	var values = mutableListOf<Int>()
-	for (c in 'a'..'z') {
-		val tmp = input.filter { it != c && it != c - 32 }
-		val value = reactMe(tmp).length
-		values.add(value)
-		println("$c ${value}")	
-	}
+	var second = ('a'..'z').map { c ->
+		reactMe( input.filter { it != c && it != c - 32 } ).length
+	}.toList().min()
 	println("First part: ${reactMe(input).length}")
-	println("Second part: ${values.min()}")
+	println("Second part: $second")
 }
