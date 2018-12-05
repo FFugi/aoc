@@ -1,33 +1,25 @@
 import java.io.File
 import kotlin.math.abs
 
-fun reactMe(input : String) : MutableList<Char> {
-	var output = input.toMutableList()
-	var range = output.indices
-	var i = 0
-	while (i < range.last) {
-		do {
-			var wasChange = false
-			if (i < range.last) {
-				if (abs(output[i] - output[i + 1]) == 32){
-					wasChange = true
-					output.removeAt(i)
-					output.removeAt(i)
-					range = output.indices
-					if (i > 0) { i-- }
-				}
-			}
-		} while (wasChange)
-		i++
+fun reactMe(input : String) : String {
+	val output = StringBuilder()
+	input.forEach { c ->
+		val last = output.getOrElse(output.length - 1, { c } )
+		if (abs(c - last)  == 32) {
+			output.setLength(output.length - 1)
+		} else {
+			output.append(c)
+		}
+
 	}
-	return output
+	return output.toString()
 }
 
 fun main(args : Array<String>) {
 	var input = File(args[0]).readLines()[0]
 	var second = ('a'..'z').map { c ->
-		reactMe( input.filter { it != c && it != c - 32 } ).size
+		reactMe( input.filter { it != c && it != c - 32 } ).length
 	}.toList().min()
-	println("First part: ${reactMe(input).size}")
+	println("First part: ${reactMe(input).length}")
 	println("Second part: $second")
 }
