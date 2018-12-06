@@ -1,9 +1,7 @@
 import java.io.File
 
 fun main(args : Array<String>) {
-	val input = File(args[0]).readLines()
-	
-	val sorted = input.sortedWith(compareBy( { it.substring(1..16)} ))
+	val sorted = File(args[0]).readLines().sortedWith(compareBy( { it.substring(1..16)} ))
 	val guardMap = HashMap<Int, HashMap<Int, Int>>()
 	var currentId = -1
 	var feltWhen = -1;
@@ -17,10 +15,9 @@ fun main(args : Array<String>) {
 			feltWhen = minutes
 		} else {
 			for (i in feltWhen until minutes) {
-				if (guardMap[currentId] == null) {
-					guardMap[currentId] = HashMap<Int, Int>()
-				}
-				guardMap[currentId]!![i] = (guardMap[currentId]!![i] ?: 0) + 1
+				val map = guardMap.getOrPut(currentId, { HashMap<Int, Int>() })
+				val min = map.getOrElse(i, { 0 })
+				map.put(i, min + 1)
 			}
 		}
 	}
