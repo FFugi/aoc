@@ -10,7 +10,6 @@ fun reactMe(input : String) : String {
 		} else {
 			output.append(c)
 		}
-
 	}
 	return output.toString()
 }
