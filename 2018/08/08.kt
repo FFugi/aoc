@@ -1,7 +1,6 @@
 import java.io.File
-import java.util.Stack
 
-data class Data(var index : Int, val list : List<Int>)
+data class Data(var index : Int, val list : IntArray)
 
 data class Node(val sum : Int, val value : Int)
 
@@ -39,7 +38,7 @@ fun recursiveSum(dat : Data) : Node {
 }
 
 fun main(args : Array<String>) {
-	val input = File(args[0]).readLines()[0].split(' ').map { it.toInt() }
+	val input = File(args[0]).readLines()[0].split(' ').map { it.toInt() }.toIntArray()
 	val dat = Data(0, input)
 	val result = recursiveSum(dat)
 	println("First part: ${result.sum}\nSecond part: ${result.value}")
