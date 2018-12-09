@@ -6,9 +6,8 @@ fun getScore(playerCount : Int, lastMarble : Int) : Long {
 	val circle = LinkedList<Long>()
 	circle.add(0)
 
-	var i = 0
 	var it = circle.listIterator()
-	do {
+	for (i in 0 until lastMarble) {
 		val currentPlayer = i % playerCount
 		val currentMarble = i + 1L
 		if (currentMarble % 23 == 0L){
@@ -36,8 +35,7 @@ fun getScore(playerCount : Int, lastMarble : Int) : Long {
 			it.add(currentMarble)
 			it.previous()
 		}
-		i++
-	} while(i < lastMarble)
+	}
 	return playerPts.max() ?: 0
 }
 
