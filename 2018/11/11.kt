@@ -17,12 +17,21 @@ fun main(args : Array<String>) {
 		if (size % (dim / 20) == 0) { print('#') }
 		for (y in 1..(dim - size + 1)) {
 			for (x in 1..(dim - size + 1)) {
-				var sum = sumGrid.getOrElse(Square(Point(x, y), size - 1), { 0 })
-				for (i in 0 until size) {
-					sum += sumGrid.getOrElse(Square(Point(x + size - 1, y + i), 1), { 0 } )
-				}
-				for (i in 0 until size - 1) {
-					sum += sumGrid.getOrElse(Square(Point(x + i, y + size - 1), 1), { 0 } )
+				var sum = 0
+				if (size % 2 == 0) {
+					val half = size / 2
+					sum += sumGrid.getOrElse(Square(Point(x, y), half), { 0 })
+					sum += sumGrid.getOrElse(Square(Point(x + half, y), half), { 0 })
+					sum += sumGrid.getOrElse(Square(Point(x, y + half), half), { 0 })
+					sum += sumGrid.getOrElse(Square(Point(x + half, y + half), half), { 0 })
+				} else {
+					val smaller = size / 2
+					val bigger = smaller + 1
+					sum += sumGrid.getOrElse(Square(Point(x, y), bigger), { 0 })
+					sum += sumGrid.getOrElse(Square(Point(x + bigger, y), smaller), { 0 })
+					sum += sumGrid.getOrElse(Square(Point(x, y + bigger), smaller), { 0 })
+					sum += sumGrid.getOrElse(Square(Point(x + smaller, y + smaller), bigger), { 0 })
+					sum -= sumGrid.getOrElse(Square(Point(x + smaller, y + smaller), 1), { 0 })
 				}
 				sumGrid[Square(Point(x, y), size)] = sum
 			}
