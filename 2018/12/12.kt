@@ -6,8 +6,8 @@ fun Boolean.toChar() : Char = if (this) '#' else '.'
 
 fun Char.toBoolean() : Boolean = if (this == '#') true else false
 
-fun sumAfter(iterations : Long, posMap : Map<String, Boolean>, initState : String) : Long {
-	val stateMap = HashMap(initState.mapIndexed { 
+fun sumAfter(iterations : Long, pattern : Map<String, Boolean>, initState : String) : Long {
+	val state = HashMap(initState.mapIndexed { 
 		index, st -> index to if (st == '#') true else false 
 	}.toMap())
 
@@ -23,46 +23,43 @@ fun sumAfter(iterations : Long, posMap : Map<String, Boolean>, initState : Strin
 	var wasInterrupted = false
 
 	for (i in 0..iterations) {
-		val filtered = stateMap.filter { it.value == true }
+		val filtered = state.filter { it.value == true }
 		val min = (filtered.minBy { it.key }?.key ?: 0) - 2
 		val max = (filtered.maxBy { it.key }?.key ?: 0) + 2
 		val toChange = hashSetOf<Int>()
 		for (pos in min..max) {
 			val sequence = StringBuilder()
 			for (j in -2..2) {
-				val ch = stateMap.getOrPut(pos + j, { false }).toChar()
+				val ch = state.getOrPut(pos + j, { false }).toChar()
 				sequence.append(ch)
 			}
 			val current = sequence[2]
-			val result = posMap.getOrElse(sequence.toString(), { false }).toChar()
+			val result = pattern.getOrElse(sequence.toString(), { false }).toChar()
 			if (current != result) {
 				toChange.add(pos)
 			}
 		}
-		val currentSum = stateMap.filter { it.value == true }
+		val currentSum = state.filter { it.value == true }
 									.map { it.key }
 									.fold(0, { sum, elem -> sum + elem })
 		val diff = currentSum - previousSum 
 		que.removeFirst()
 		que.addLast(diff.toLong())
-		var ok = true
-		var prev = que.first()
-		que.forEach {
-			if (prev != it) {
-				ok = false
-			}
-		}
-		if (ok) {
+		wasInterrupted = que.fold(true, { acc, it -> when {
+			!acc -> acc
+			it != que.first() -> false
+			else -> true
+		}})
+		if (wasInterrupted) {
 			baseSum = currentSum 
 			indexWhenDetected = i
 			constDiff = diff
-			wasInterrupted = true
 			break
 		} 
 		previousSum = currentSum
 	
 		toChange.forEach {
-			stateMap[it] = !stateMap.getOrElse(it, { false })
+			state[it] = !state.getOrElse(it, { false })
 		}
 	}
 	return if (wasInterrupted) {
@@ -74,10 +71,10 @@ fun sumAfter(iterations : Long, posMap : Map<String, Boolean>, initState : Strin
 
 fun main(args : Array<String>) {
 	val input = File(args[0]).readLines()
-	val state = input[0].drop(15)
-	val posMap = input.subList(2, input.size).map {
+	val initState = input[0].drop(15)
+	val pattern = input.subList(2, input.size).map {
 		it.substring(0..4) to if (it[9] == '#') true else false 
 	}.toMap()
-	println("First part: ${sumAfter(20, posMap, state)}")
-	println("Second part: ${sumAfter(50000000000, posMap, state)}")
+	println("First part: ${sumAfter(20, pattern, initState)}")
+	println("Second part: ${sumAfter(50000000000, pattern, initState)}")
 }
