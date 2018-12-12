@@ -7,15 +7,13 @@ data class Coord(var x : Int, var y : Int)
 
 data class PointInfo(var isInfinite : Boolean, var count : Int)
 
-fun distance(from : Coord, to : Coord) : Int {
-	return abs(from.x - to.x) + abs(from.y - to.y)	
-}
+fun distance(from : Coord, to : Coord) : Int = abs(from.x - to.x) + abs(from.y - to.y)	
 
 fun main(args : Array<String>) {
 	val input = File(args[0]).readLines().map { 
 		val splited = it.split(',')	
 		Coord(splited[0].toInt(), splited[1].drop(1).toInt())
-	}.sortedWith(compareBy({ it.x }, { it.y }))
+	}
 
 	val maxX = input.maxWith(compareBy({ it.x }))?.x ?: 0
 	val minX = input.maxWith(compareBy({ -it.x }))?.x ?: 0
@@ -43,9 +41,31 @@ fun main(args : Array<String>) {
 						counts[mapVal.pointNo] --
 					}
 					map.put(Coord(x, y), Point(curDistance, -1))
-				} 
+				}
 			}
 		}
+	}
+	val cords = input.mapTo(HashSet<Coord>()) { it }
+	for (y in minY..maxY) {
+		for (x in minX..maxX) {
+			val cur = (map[Coord(x, y + 1)]?.pointNo ?: 0)
+			val l = (map[Coord(x - 1, y)]?.pointNo ?: 0)
+			val r = (map[Coord(x + 1, y)]?.pointNo ?: 0)
+			val t = (map[Coord(x, y - 1)]?.pointNo ?: 0)
+			val d = (map[Coord(x, y + 1)]?.pointNo ?: 0)
+			if (cords.contains(Coord(x, y))) {
+				print('X')
+			} else if (cur == -1
+				|| cur - r != 0
+				|| cur - l != 0
+				|| cur - d != 0
+				|| cur - t != 0) {
+				print('#')
+			} else {
+				print(' ')
+			}
+		}
+		print('\n')
 	}
 
 	val infinitePoints = HashSet<Int>()
@@ -78,7 +98,4 @@ fun main(args : Array<String>) {
 		}
 	}
 	println("Second part: $sizeOfRegion")
-
-
-
 }
