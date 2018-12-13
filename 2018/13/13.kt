@@ -1,9 +1,8 @@
 import java.io.File
-//import java.util.TreeMap
 
 data class Position(var x : Int, var y : Int)
 
-data class Cart(val pos : Position, var dir : Direction, var turn : Int = 0)
+data class Cart(var dir : Direction, var turn : Int = 0)
 
 enum class Direction {
 	UP, DOWN, LEFT, RIGHT
@@ -15,24 +14,24 @@ enum class Turn {
 
 fun turns() = listOf(Turn.LEFT, Turn.STRAIGHT, Turn.RIGHT)
 
-fun rotate(cart : Cart, turn : Turn) {
-	when (cart.dir) {
-		Direction.LEFT -> cart.dir = when (turn) {
+fun Cart.rotate(turn : Turn) {
+	when (this.dir) {
+		Direction.LEFT -> this.dir = when (turn) {
 			Turn.LEFT -> Direction.DOWN
 			Turn.RIGHT -> Direction.UP
 			else -> Direction.LEFT
 		}
-		Direction.RIGHT -> cart.dir = when (turn) {
+		Direction.RIGHT -> this.dir = when (turn) {
 			Turn.LEFT -> Direction.UP
 			Turn.RIGHT -> Direction.DOWN
 			else -> Direction.RIGHT
 		}
-		Direction.UP -> cart.dir = when (turn) {
+		Direction.UP -> this.dir = when (turn) {
 			Turn.LEFT -> Direction.LEFT
 			Turn.RIGHT -> Direction.RIGHT
 			else -> Direction.UP
 		}
-		Direction.DOWN -> cart.dir = when (turn) {
+		Direction.DOWN -> this.dir = when (turn) {
 			Turn.LEFT -> Direction.RIGHT
 			Turn.RIGHT -> Direction.LEFT
 			else -> Direction.DOWN
@@ -40,14 +39,14 @@ fun rotate(cart : Cart, turn : Turn) {
 	}
 }
 
-fun turnIfNeeded(cart : Cart, ch : Char) {
+fun Cart.turnIfNeeded(ch : Char) {
 	when (ch) {
 		'+' -> {
-			rotate(cart, turns()[cart.turn % 3])	
-			cart.turn ++
+			this.rotate(turns()[this.turn % 3])	
+			this.turn ++
 		}
 		'/' -> {
-			rotate(cart, when (cart.dir) {
+			this.rotate(when (this.dir) {
 				Direction.DOWN -> Turn.RIGHT
 				Direction.UP -> Turn.RIGHT
 				Direction.LEFT -> Turn.LEFT
@@ -55,7 +54,7 @@ fun turnIfNeeded(cart : Cart, ch : Char) {
 			})
 		}
 		'\\' -> {
-			rotate(cart, when (cart.dir) {
+			this.rotate(when (this.dir) {
 				Direction.DOWN -> Turn.LEFT
 				Direction.UP -> Turn.LEFT
 				Direction.LEFT -> Turn.RIGHT
@@ -69,7 +68,7 @@ fun turnIfNeeded(cart : Cart, ch : Char) {
 fun main(args : Array<String>) {
 	val input = File(args[0]).readLines()
 	val rails = HashMap<Position, Char>()
-	val carts = mutableListOf<Cart>()
+	val carts = HashMap<Position, Cart>()
 	input.forEachIndexed { y, line ->
 		line.forEachIndexed { x, ch ->
 			val pos = Position(x, y)
@@ -81,62 +80,60 @@ fun main(args : Array<String>) {
 				'+' -> rails[pos] = '+'
 				'<' ->  {
 					rails.put(pos, '-')
-					carts.add(Cart(pos.copy(), Direction.LEFT))
+					carts.put(pos.copy(), Cart(Direction.LEFT))
 				}
 				'>' ->  {
 					rails.put(pos, '-')
-					carts.add(Cart(pos.copy(), Direction.RIGHT))
+					carts.put(pos.copy(), Cart(Direction.RIGHT))
 				}
 				'^' ->  {
-					rails[pos] = '|'
-					carts.add(Cart(pos.copy(), Direction.UP))
+					rails.put(pos, '|')
+					carts.put(pos.copy(), Cart(Direction.UP))
 				}
 				'v' ->  {
-					rails[pos] = '|'
-					carts.add(Cart(pos.copy(), Direction.DOWN))
+					rails.put(pos, '|')
+					carts.put(pos.copy(), Cart(Direction.DOWN))
 				}
 				else -> {}
 			}
 		}
 	}
-	val cmp = Comparator<Cart>({a, b -> when {
-		a.pos.y < b.pos.y -> -1
-		a.pos.y > b.pos.y -> 1
-		a.pos.x < b.pos.x -> -1
-		a.pos.x > b.pos.x -> 1
+	val cmp = Comparator<Position>({a, b -> when {
+		a.y < b.y -> -1
+		a.y > b.y -> 1
+		a.x < b.x -> -1
+		a.x > b.x -> 1
 		else -> 0
 	}})
 	var wasFirstCrash = false
 	var finished = false
 	do {
-		val toRemove = mutableListOf<Cart>()
-		carts.sortWith(cmp)
-		carts.forEach { cart ->
-			when (cart.dir) {
-				Direction.LEFT -> cart.pos.x--
-				Direction.RIGHT -> cart.pos.x++
-				Direction.UP -> cart.pos.y--
-				Direction.DOWN -> cart.pos.y++
-			}
-			turnIfNeeded(cart, rails.getOrElse(cart.pos, { '+' } ))
-			carts.forEach { 
-				if (it != cart && it.pos == cart.pos) {
+		val keys = carts.keys.toMutableList().sortedWith(cmp)
+		keys.forEach { key ->
+			if (carts.contains(key)) {
+				val cart = carts.remove(key)!!
+				val newPos = when (cart.dir) {
+					Direction.LEFT -> Position(key.x - 1, key.y)
+					Direction.RIGHT -> Position(key.x + 1, key.y)
+					Direction.UP -> Position(key.x, key.y - 1)
+					Direction.DOWN -> Position(key.x, key.y + 1)
+				}
+				if (carts.contains(newPos)) {
+					carts.remove(newPos)
 					if (!wasFirstCrash) {
 						wasFirstCrash = true
-						println("First part: ${it.pos.x},${it.pos.y}")
+						println("First part: ${newPos.x},${newPos.y}")
 					}
-					toRemove.add(it)
-					toRemove.add(cart)
+				} else {
+					cart.turnIfNeeded(rails.getOrElse(newPos, { '+' } ))
+					carts.put(newPos, cart)
 				}
 			}
 		}
-		toRemove.forEach {
-			carts.remove(it)
-		}
 		if (carts.size == 1) {
 			finished = true
-			val last = carts.first()
-			println("Second part: ${last.pos.x},${last.pos.y}")
+			val last = carts.asIterable().first()
+			println("Second part: ${last.key.x},${last.key.y}")
 		}
 	} while (!finished)
 }
