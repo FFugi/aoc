@@ -21,10 +21,10 @@ fun deb(list : List<Int>, elf1 : Int, elf2 : Int) {
 
 fun main(args : Array<String>) {
 	val input = args[0].toInt()
-	val recepies = mutableListOf(3, 7)//, 1, 0) 
+	val recepies = mutableListOf(3, 7)
 	var elf1 = 0
 	var elf2 = 1
-	val sequence = mutableListOf(3, 7)//, 1, 0) 
+	val sequence = mutableListOf(3, 7)
 	var i = 0L
 	var finished = false
 	var firstFinished = false
@@ -34,7 +34,6 @@ fun main(args : Array<String>) {
 		recepies.addAll(toAdd)
 		val diff1 = recepies.size - elf1
 		val diff2 = recepies.size - elf2
-		//println("${recepies.size} + $diff % ${recepies.size}")
 		elf1 = (recepies.size + (1 + recepies[elf1] - diff1)) % recepies.size
 		elf2 = (recepies.size + (1 + recepies[elf2] - diff2)) % recepies.size
 
