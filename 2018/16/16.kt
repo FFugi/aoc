@@ -5,176 +5,39 @@ data class Example(
 		val instruction : List<Int>, 
 		val after : List<Int>)
 
-// Additions
-fun addr(registers : List<Int>, instruction : List<Int>) : List<Int> {
+fun exec(registers : List<Int>, instruction : List<Int>, code : Opcode) : List<Int> {
 	val list = registers.toMutableList()
 	val a = instruction[1]
 	val b = instruction[2]
 	val c = instruction[3]
-	list[c] = registers[a] + registers[b]
+	list[c] = when (code) {
+		Opcode.ADDR -> registers[a] + registers[b]
+		Opcode.ADDI -> registers[a] + instruction[2]
+		Opcode.MULR -> registers[a] * registers[b]
+		Opcode.MULI -> registers[a] * instruction[2]
+		Opcode.BANR -> registers[a] and registers[b]
+		Opcode.BANI -> registers[a] and b
+		Opcode.BORR -> registers[a] or registers[b]
+		Opcode.BORI -> registers[a] or b
+		Opcode.SETR -> registers[a]
+		Opcode.SETI -> a
+		Opcode.GTIR -> if (a > registers[b]) 1 else 0
+		Opcode.GTRI -> if (registers[a] > b) 1 else 0
+		Opcode.GTRR -> if (registers[a] > registers[b]) 1 else 0
+		Opcode.EQIR -> if (a == registers[b]) 1 else 0
+		Opcode.EQRI -> if (registers[a] == b) 1 else 0
+		Opcode.EQRR -> if (registers[a] == registers[b]) 1 else 0
+	}
 	return list
 }
 
-fun addi(registers : List<Int>, instruction : List<Int>) : List<Int> {
-	val list = registers.toMutableList()
-	val a = instruction[1]
-	val c = instruction[3]
-	list[c] = registers[a] + instruction[2]
-	return list
-}
-
-// Multiplications 
-fun mulr(registers : List<Int>, instruction : List<Int>) : List<Int> {
-	val list = registers.toMutableList()
-	val a = instruction[1]
-	val b = instruction[2]
-	val c = instruction[3]
-	list[c] = registers[a] * registers[b]
-	return list
-}
-
-fun muli(registers : List<Int>, instruction : List<Int>) : List<Int> {
-	val list = registers.toMutableList()
-	val a = instruction[1]
-	val c = instruction[3]
-	list[c] = registers[a] * instruction[2]
-	return list
-}
-
-// Bitwise
-fun banr(registers : List<Int>, instruction : List<Int>) : List<Int> {
-	val list = registers.toMutableList()
-	val a = instruction[1]
-	val b = instruction[2]
-	val c = instruction[3]
-	list[c] = registers[a] and registers[b]
-	return list
-}
-
-fun bani(registers : List<Int>, instruction : List<Int>) : List<Int> {
-	val list = registers.toMutableList()
-	val a = instruction[1]
-	val b = instruction[2]
-	val c = instruction[3]
-	list[c] = registers[a] and b
-	return list
-}
-
-fun borr(registers : List<Int>, instruction : List<Int>) : List<Int> {
-	val list = registers.toMutableList()
-	val a = instruction[1]
-	val b = instruction[2]
-	val c = instruction[3]
-	list[c] = registers[a] or registers[b]
-	return list
-}
-
-fun bori(registers : List<Int>, instruction : List<Int>) : List<Int> {
-	val list = registers.toMutableList()
-	val a = instruction[1]
-	val b = instruction[2]
-	val c = instruction[3]
-	list[c] = registers[a] or b
-	return list
-}
-
-// Assignment
-fun setr(registers : List<Int>, instruction : List<Int>) : List<Int> {
-	val list = registers.toMutableList()
-	val a = instruction[1]
-	val c = instruction[3]
-	list[c] = registers[a]
-	return list
-}
-
-fun seti(registers : List<Int>, instruction : List<Int>) : List<Int> {
-	val list = registers.toMutableList()
-	val a = instruction[1]
-	val c = instruction[3]
-	list[c] = a
-	return list
-}
-
-// Greater-than testing:
-fun gtir(registers : List<Int>, instruction : List<Int>) : List<Int> {
-	val list = registers.toMutableList()
-	val a = instruction[1]
-	val b = instruction[2]
-	val c = instruction[3]
-	list[c] = if (a > registers[b]) 1 else 0
-	return list
-}
-
-fun gtri(registers : List<Int>, instruction : List<Int>) : List<Int> {
-	val list = registers.toMutableList()
-	val a = instruction[1]
-	val b = instruction[2]
-	val c = instruction[3]
-	list[c] = if (registers[a] > b) 1 else 0
-	return list
-}
-
-fun gtrr(registers : List<Int>, instruction : List<Int>) : List<Int> {
-	val list = registers.toMutableList()
-	val a = instruction[1]
-	val b = instruction[2]
-	val c = instruction[3]
-	list[c] = if (registers[a] > registers[b]) 1 else 0
-	return list
-}
-
-// Equality testing:
-fun eqir(registers : List<Int>, instruction : List<Int>) : List<Int> {
-	val list = registers.toMutableList()
-	val a = instruction[1]
-	val b = instruction[2]
-	val c = instruction[3]
-	list[c] = if (a == registers[b]) 1 else 0
-	return list
-}
-
-fun eqri(registers : List<Int>, instruction : List<Int>) : List<Int> {
-	val list = registers.toMutableList()
-	val a = instruction[1]
-	val b = instruction[2]
-	val c = instruction[3]
-	list[c] = if (registers[a] == b) 1 else 0
-	return list
-}
-
-fun eqrr(registers : List<Int>, instruction : List<Int>) : List<Int> {
-	val list = registers.toMutableList()
-	val a = instruction[1]
-	val b = instruction[2]
-	val c = instruction[3]
-	list[c] = if (registers[a] == registers[b]) 1 else 0
-	return list
-}
-
-enum class Opcode(val exec : (List<Int>, List<Int>) -> List<Int>) {
-	ADDR({ reg, inst -> addr(reg, inst) }), 
-	ADDI({ reg, inst -> addi(reg, inst) }), 
-
-	MULR({ reg, inst -> mulr(reg, inst) }), 
-	MULI({ reg, inst -> muli(reg, inst) }),
-
-	BANR({ reg, inst -> banr(reg, inst) }), 
-	BANI({ reg, inst -> bani(reg, inst) }), 
-	BORR({ reg, inst -> borr(reg, inst) }), 
-	BORI({ reg, inst -> bori(reg, inst) }),
-
-	SETR({ reg, inst -> setr(reg, inst) }), 
-	SETI({ reg, inst -> seti(reg, inst) }),
-
-	GTIR({ reg, inst -> gtir(reg, inst) }),
-	GTRI({ reg, inst -> gtri(reg, inst) }), 
-	GTRR({ reg, inst -> gtrr(reg, inst) }),
-
-	EQIR({ reg, inst -> eqir(reg, inst) }), 
-	EQRI({ reg, inst -> eqri(reg, inst) }), 
-	EQRR({ reg, inst -> eqrr(reg, inst) }),
-
-	NONE({ _, _ -> listOf<Int>() })
+enum class Opcode {
+	ADDR, ADDI, 
+	MULR, MULI,
+	BANR, BANI, BORR, BORI,
+	SETR, SETI,
+	GTIR, GTRI, GTRR,
+	EQIR, EQRI, EQRR,
 }
 
 
@@ -205,7 +68,7 @@ fun main(args : Array<String>) {
 		var i = 0
 		val ( before, instruction, after ) = it
 		Opcode.values().forEach { value ->
-			if (value.exec(before, instruction).toString() == after.toString()) {
+			if (exec(before, instruction, value).toString() == after.toString()) {
 				codeSets[instruction[0]].add(value)
 				i++
 			}
@@ -236,7 +99,7 @@ fun main(args : Array<String>) {
 
 	part2.forEach { instruction ->
 		val opcode = instruction[0]
-		registers = opcodes[opcode].exec(registers, instruction)
+		registers = exec(registers, instruction, opcodes[opcode])
 	}
 	println("Second part: ${registers[0]}")
 }
