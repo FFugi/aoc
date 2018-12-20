@@ -61,9 +61,9 @@ fun doIteration(map : MutableMap<Position, Char>) : MutableMap<Position, Char> {
 }
 
 fun getResult(map : MutableMap<Position, Char>) : Int {
-	val lumberjacks = map.values.fold(0, { acc, it -> if (it == '#') acc + 1 else acc })
+	val lumberyards = map.values.fold(0, { acc, it -> if (it == '#') acc + 1 else acc })
 	val trees = map.values.fold(0, { acc, it -> if (it == '|') acc + 1 else acc })
-	return trees * lumberjacks
+	return trees * lumberyards
 }
 
 fun main(args : Array<String>) {
