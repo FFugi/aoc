@@ -37,7 +37,7 @@ void stepPos(Position& pos, char direction) {
 void putWire(
         Positions& positions,
         string wire,
-           int8_t wireNum,
+        int8_t wireNum,
         Intersections& intersections,
         Steps& steps)
 {
@@ -100,17 +100,15 @@ int main(int argc, char **argv) {
     putWire(positions, wire2, 2, intersections, steps2);
 
     uint32_t distance = numeric_limits<uint32_t>::max();
+    uint32_t minSteps = numeric_limits<uint32_t>::max();
     for (auto& i : intersections) {
         uint32_t iDist = abs(i.first) + abs(i.second);
         distance = min(distance, iDist);
-    }
-    cout << "Part one: " << distance << endl;
 
-    uint32_t minSteps = numeric_limits<uint32_t>::max();
-    for (auto& i : intersections) {
         uint32_t steps = steps1.at(i) + steps2.at(i);
         minSteps = min(minSteps, steps);
     }
+    cout << "Part one: " << distance << endl;
     cout << "Part two: " << minSteps << endl;
 
     return 0;
