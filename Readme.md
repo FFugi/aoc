@@ -8,5 +8,5 @@ I treat this as a way to learn new programming language and also have fun!
 | 2018  | Kotlin     | 18/25  |
 | 2019  | C++        | 6/25   |
 | 2021  | Python     | 15/25  |
-| 2022  | Python     | 4/25   |
+| 2022  | Python     | 6/25   |
 
