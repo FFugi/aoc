@@ -1,6 +1,5 @@
 # aoc - advent of code
 This repository contains my solutions to [Advent of Code](https://adventofcode.com/).
-I treat this as a way to learn new programming language and also have fun!
 ## Progress
 | Year  | Language   | Solved |
 |-------|------------|--------|
@@ -9,4 +8,5 @@ I treat this as a way to learn new programming language and also have fun!
 | 2019  | C++        | 6/25   |
 | 2021  | Python     | 16/25  |
 | 2022  | Python     | 4/25   |
+| 2024  | Python     | 2/25   |
 
