@@ -8,5 +8,5 @@ This repository contains my solutions to [Advent of Code](https://adventofcode.c
 | 2019  | C++        | 6/25   |
 | 2021  | Python     | 16/25  |
 | 2022  | Python     | 4/25   |
-| 2024  | Python     | 4/25   |
+| 2024  | Python     | 5/25   |
 
